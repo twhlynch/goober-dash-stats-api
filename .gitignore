@@ -1,0 +1,10 @@
+.DS_Store
+
+pyvenv.cfg
+/lib
+/include
+/bin
+
+/v1
+
+.auth
