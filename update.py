@@ -187,7 +187,7 @@ def get_user_stats(user_id: str):
     ws.send(json.dumps(levels_query).encode())
     _, msg = ws.recv(), ws.recv()
     ws.close()
-    response = json.loads(json.loads(msg)["rpc"]["payload"])
+    response = json.loads(json.loads(msg).get("rpc", {}).get("payload", '{}'))
 
     return response
 
@@ -269,7 +269,8 @@ def main():
     users = []
     for i, id in enumerate(user_ids):
         user_stats = get_user_stats(id)
-        users.append(user_stats)
+        if user_stats != {}:
+            users.append(user_stats)
         print(f"User: {i + 1} / {len(user_ids)}")
     write_json("users", users)
 
