@@ -1,0 +1,16 @@
+name: Deploy
+
+on:
+  schedule:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+jobs:
+  send-request:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send curl request
+        run: |
+          curl -X GET ${{ secrets.DEPLOY_HOOK }}
+        env:
+          DEPLOY_HOOK: ${{ secrets.DEPLOY_HOOK }}
