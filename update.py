@@ -320,11 +320,11 @@ def main():
                 "winrate": winrate,
             })
         
-    wins_leaderboard = wins_leaderboard.sort(key=lambda x: x["wins"], reverse=True)[:200]
-    winstreak_leaderboard = winstreak_leaderboard.sort(key=lambda x: x["winstreak"], reverse=True)[:200]
-    games_leaderboard = games_leaderboard.sort(key=lambda x: x["games"], reverse=True)[:200]
-    deaths_leaderboard = deaths_leaderboard.sort(key=lambda x: x["deaths"], reverse=True)[:200]
-    winrate_leaderboard = winrate_leaderboard.sort(key=lambda x: x["winrate"], reverse=True)[:200]
+    wins_leaderboard = sorted(wins_leaderboard, key=lambda x: x["wins"], reverse=True)[:200]
+    winstreak_leaderboard = sorted(winstreak_leaderboard, key=lambda x: x["winstreak"], reverse=True)[:200]
+    games_leaderboard = sorted(games_leaderboard, key=lambda x: x["games"], reverse=True)[:200]
+    deaths_leaderboard = sorted(deaths_leaderboard, key=lambda x: x["deaths"], reverse=True)[:200]
+    winrate_leaderboard = sorted(winrate_leaderboard, key=lambda x: x["winrate"], reverse=True)[:200]
     
     write_json("wins_leaderboard", wins_leaderboard)
     write_json("winstreak_leaderboard", winstreak_leaderboard)
