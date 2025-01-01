@@ -23,6 +23,7 @@ def write_json(name: str, data):
 
 current_cid = 0
 def cid():
+    global current_cid
     current_cid = current_cid + 1
     return str(current_cid)
 
