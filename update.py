@@ -265,27 +265,72 @@ def main():
     # user ids
     write_json("user_ids", user_ids)
 
-    # wins
+    # users
     users = []
     for i, id in enumerate(user_ids):
         user_stats = get_user_stats(id)
         if user_stats != {}:
+            user_stats["id"] = id
             users.append(user_stats)
         print(f"User: {i + 1} / {len(user_ids)}")
     write_json("users", users)
 
-    # wins leaderboard
+    # stats leaderboards
     wins_leaderboard = []
+    winstreak_leaderboard = []
+    games_leaderboard = []
+    deaths_leaderboard = []
+    winrate_leaderboard = []
+    
     for user in users:
         wins = user["stats"]["GamesWon"] if "GamesWon" in user["stats"] else 0
+        winstreak = user["stats"]["Winstreak"] if "Winstreak" in user["stats"] else 0
+        games = user["stats"]["GamesPlayed"] if "GamesPlayed" in user["stats"] else 0
+        deaths = user["stats"]["Deaths"] if "Deaths" in user["stats"] else 0
+        winrate = wins / games if games > 100 else 0
+
         if wins > 0:
             wins_leaderboard.append({
+                "id": user["id"],
                 "username": user["display_name"],
                 "wins": wins,
             })
-    wins_leaderboard.sort(key=lambda x: x["wins"], reverse=True)
-    wins_leaderboard = wins_leaderboard[:200]
+        if winstreak > 0:
+            winstreak_leaderboard.append({
+                "id": user["id"],
+                "username": user["display_name"],
+                "winstreak": winstreak,
+            })
+        if games > 0:
+            games_leaderboard.append({
+                "id": user["id"],
+                "username": user["display_name"],
+                "games": games,
+            })
+        if deaths > 0:
+            deaths_leaderboard.append({
+                "id": user["id"],
+                "username": user["display_name"],
+                "deaths": deaths,
+            })
+        if winrate > 0:
+            winrate_leaderboard.append({
+                "id": user["id"],
+                "username": user["display_name"],
+                "winrate": winrate,
+            })
+        
+    wins_leaderboard = wins_leaderboard.sort(key=lambda x: x["wins"], reverse=True)[:200]
+    winstreak_leaderboard = winstreak_leaderboard.sort(key=lambda x: x["winstreak"], reverse=True)[:200]
+    games_leaderboard = games_leaderboard.sort(key=lambda x: x["games"], reverse=True)[:200]
+    deaths_leaderboard = deaths_leaderboard.sort(key=lambda x: x["deaths"], reverse=True)[:200]
+    winrate_leaderboard = winrate_leaderboard.sort(key=lambda x: x["winrate"], reverse=True)[:200]
+    
     write_json("wins_leaderboard", wins_leaderboard)
+    write_json("winstreak_leaderboard", winstreak_leaderboard)
+    write_json("games_leaderboard", games_leaderboard)
+    write_json("deaths_leaderboard", deaths_leaderboard)
+    write_json("winrate_leaderboard", winrate_leaderboard)
 
 if __name__ == "__main__":
     main()
