@@ -219,11 +219,19 @@ def main():
     # player records leaderboards
     records_leaderboard = []
     for level in race_leaderboards:
-        if len(level["leaderboard"]) > 0:
-            record = level["leaderboard"][0]
+        leaderboard = level["leaderboard"]
+        current = 0
+        best_time = None
+        while current < len(leaderboard):
+            record = leaderboard[current]
+            record_time = record["score"]
+            if best_time is not None and record_time != best_time:
+                break
+            best_time = record_time
+
             record_holder_id = record["owner_id"]
             record_holder_username = record["username"]["value"]
-            
+
             found = False
             for record in records_leaderboard:
                 if record["id"] == record_holder_id:
