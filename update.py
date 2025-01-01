@@ -224,6 +224,7 @@ def main():
         best_time = None
         while current < len(leaderboard):
             record = leaderboard[current]
+            current = current + 1
             record_time = record["score"]
             if best_time is not None and record_time != best_time:
                 break
