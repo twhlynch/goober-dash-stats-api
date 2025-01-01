@@ -130,7 +130,6 @@ def current_season():
 
     return start_number[index - 1] + count - 1
 
-# currently unused
 def get_season_leaderboard(season: int, leaderboard_id: str, limit: int, owner_ids: str, cursor: str = ""):
     query_url = f"{rest_url}leaderboard/"
     query_url += f"{leaderboard_id}.{season}"
@@ -245,7 +244,10 @@ def main():
                     "username": record_holder_username,
                     "records": 1,
                 })
-            
+        
+        # uncomment for all leaderboard users
+        # for record in leaderboard:
+        #     record_holder_id = record["owner_id"]
             if record_holder_id not in user_ids:
                 user_ids.append(record_holder_id)
     records_leaderboard.sort(key=lambda x: x["records"], reverse=True)
@@ -281,6 +283,7 @@ def main():
                 "wins": wins,
             })
     wins_leaderboard.sort(key=lambda x: x["wins"], reverse=True)
+    wins_leaderboard = wins_leaderboard[:200]
     write_json("wins_leaderboard", wins_leaderboard)
 
 if __name__ == "__main__":
