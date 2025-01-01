@@ -244,7 +244,7 @@ def main():
 
     # season leaderboards
     season = current_season()
-    season_leaderboard = get_season_leaderboard(season, "global", 100, "00000000-0000-0000-0000-000000000001")
+    season_leaderboard = get_season_leaderboard(season, "global", 1000, "00000000-0000-0000-0000-000000000001")
     write_json(f"season_leaderboard", season_leaderboard)
     for record in season_leaderboard["records"]:
         owner_id = record["owner_id"]

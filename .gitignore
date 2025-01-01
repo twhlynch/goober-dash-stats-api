@@ -5,6 +5,7 @@ pyvenv.cfg
 /include
 /bin
 
-/v1
+/v1/*.json
+!/v1/user_ids.json
 
 .auth
