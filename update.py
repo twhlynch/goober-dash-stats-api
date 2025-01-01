@@ -265,7 +265,7 @@ def main():
     # wins leaderboard
     wins_leaderboard = []
     for user in users:
-        wins = user["stats"]["GamesWon"]
+        wins = user["stats"]["GamesWon"] if "GamesWon" in user["stats"] else 0
         if wins > 0:
             wins_leaderboard.append({
                 "username": user["display_name"],
