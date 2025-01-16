@@ -195,9 +195,32 @@ def main():
     # levels
     levels = get_levels()
     write_json("levels", levels)
+    
+    levels_leaderboard = []
+    
     for level in levels:
-        if level["author_id"] not in user_ids:
-            user_ids.append(level["author_id"])
+        author_id = level["author_id"]
+        author_name = level["author_name"]
+
+        found = False
+        for item in levels_leaderboard:
+            if item["id"] == author_id:
+                item["levels"] += 1
+                found = True
+                break
+        
+        if not found:
+            levels_leaderboard.append({
+                "id": author_id,
+                "username": author_name,
+                "levels": 1
+            })
+        
+        if author_id not in user_ids:
+            user_ids.append(author_id)
+    
+    levels_leaderboard = sorted(levels_leaderboard, key=lambda x: x["levels"], reverse=True)[:500]
+    write_json("levels_leaderboard", levels_leaderboard)
 
     # race levels
     race_levels = [level for level in levels if level["game_mode"] == "Race"]
