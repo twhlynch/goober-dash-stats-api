@@ -97,6 +97,13 @@ if os.path.isfile("v1/user_ids.json"):
     with open("v1/user_ids.json", "r") as f:
         user_ids = json.load(f)
 
+blacklist = []
+if os.path.isfile("v1/blacklist.json"):
+    with open("v1/blacklist.json", "r") as f:
+        blacklist = json.load(f)
+
+user_ids = [id for id in user_ids if id not in blacklist]
+
 def get_user(user_id: str = None, user_name: str = None):
     query_url = f"{rest_url}/user"
     if user_id != None:
@@ -247,6 +254,8 @@ def main():
         while current < len(leaderboard):
             record = leaderboard[current]
             current = current + 1
+            if record["owner_id"] in blacklist:
+                continue
             record_time = record["score"]
             if best_time is not None and record_time != best_time:
                 break
@@ -282,10 +291,11 @@ def main():
     write_json(f"season_leaderboard", season_leaderboard)
     for record in season_leaderboard["records"]:
         owner_id = record["owner_id"]
-        if owner_id not in user_ids:
+        if owner_id not in user_ids and owner_id not in blacklist:
             user_ids.append(owner_id)
 
     # user ids
+    user_ids = [id for id in user_ids if id not in blacklist] # redundant
     write_json("user_ids", user_ids)
 
     # users

@@ -7,5 +7,6 @@ pyvenv.cfg
 
 /v1/*.json
 !/v1/user_ids.json
+!/v1/blacklist.json
 
 .auth
