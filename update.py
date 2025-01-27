@@ -199,6 +199,8 @@ def get_user_stats(user_id: str):
     return response
 
 def main():
+    global user_ids
+
     # levels
     levels = get_levels()
     write_json("levels", levels)
