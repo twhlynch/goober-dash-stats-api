@@ -4,6 +4,7 @@ pyvenv.cfg
 /lib
 /include
 /bin
+__pycache__
 
 /v1/*.json
 !/v1/user_ids.json
