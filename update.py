@@ -114,16 +114,6 @@ if os.path.isfile("v1/blacklist.json"):
 
 user_ids = [id for id in user_ids if id not in blacklist]
 
-def get_user(user_id: str = None, user_name: str = None):
-    query_url = f"{rest_url}/user"
-    if user_id != None:
-        query_url += f"?ids={user_id}"
-    elif user_name != None:
-        query_url += f"?usernames={user_name}"
-
-    response = requests.get(query_url, headers=headers)
-    return response.json()
-
 # season leaderboard
 def current_season():
     timestamp = time.time()
