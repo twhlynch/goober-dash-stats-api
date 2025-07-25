@@ -199,29 +199,24 @@ def main():
     levels = get_levels()
     write_json("levels", levels)
 
-    levels_leaderboard = []
+    levels_leaderboard_dict = {}
 
     for level in levels:
         author_id = level["author_id"]
         author_name = level["author_name"]
 
-        found = False
-        for item in levels_leaderboard:
-            if item["id"] == author_id:
-                item["levels"] += 1
-                found = True
-                break
-
-        if not found:
-            levels_leaderboard.append({
+        if author_id not in levels_leaderboard_dict:
+            levels_leaderboard_dict[author_id] = {
                 "id": author_id,
                 "username": author_name,
-                "levels": 1
-            })
+                "levels": 0
+            }
+        levels_leaderboard_dict[author_id]["levels"] += 1
 
         if author_id not in user_ids:
             user_ids.append(author_id)
 
+    levels_leaderboard = list(levels_leaderboard_dict.values())
     levels_leaderboard = sorted(levels_leaderboard, key=lambda x: x["levels"], reverse=True)[:500]
     write_json("levels_leaderboard", levels_leaderboard)
 
@@ -242,39 +237,36 @@ def main():
     write_json("race_leaderboards", race_leaderboards)
 
     # player records leaderboards
-    records_leaderboard = []
+    records_leaderboard_dict = {}
+
     for level in race_leaderboards:
         leaderboard = level["leaderboard"]
-        current = 0
         best_time = None
-        while current < len(leaderboard):
-            record = leaderboard[current]
-            current = current + 1
+        for record in leaderboard:
             if record["owner_id"] in blacklist:
                 continue
+
             record_time = record["score"]
-            if best_time is not None and record_time != best_time:
+            if best_time is None:
+                best_time = record_time
+            elif record_time != best_time:
                 break
-            best_time = record_time
 
             record_holder_id = record["owner_id"]
             record_holder_username = record["username"]["value"]
 
-            found = False
-            for record in records_leaderboard:
-                if record["id"] == record_holder_id:
-                    record["records"] += 1
-                    found = True
-                    break
-            if not found:
-                records_leaderboard.append({
+            if record_holder_id not in records_leaderboard_dict:
+                records_leaderboard_dict[record_holder_id] = {
                     "id": record_holder_id,
                     "username": record_holder_username,
-                    "records": 1,
-                })
+                    "records": 0,
+                }
+            records_leaderboard_dict[record_holder_id]["records"] += 1
 
             if record_holder_id not in user_ids:
                 user_ids.append(record_holder_id)
+
+    records_leaderboard = list(records_leaderboard_dict.values())
     records_leaderboard.sort(key=lambda x: x["records"], reverse=True)
     write_json("records_leaderboard", records_leaderboard)
 
@@ -288,7 +280,6 @@ def main():
             user_ids.append(owner_id)
 
     # user ids
-    user_ids = [id for id in user_ids if id not in blacklist] # redundant
     write_json("user_ids", user_ids)
 
     # users
