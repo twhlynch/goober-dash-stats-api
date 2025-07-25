@@ -15,10 +15,10 @@ import websocket
 def write_json(name: str, data):
     if type(data) == "str":
         data = json.loads(data)
-    
+
     with open(f"v1/{name}.json", "w") as f:
         json.dump(data, f)
-    
+
     print(f"Updated {name}")
 
 current_cid = 0
@@ -27,7 +27,7 @@ def cid():
     current_cid = current_cid + 1
     return str(current_cid)
 
-# config 
+# config
 base_uri = "gooberdash-api.winterpixel.io"
 rest_url = f"https://{base_uri}/v2/"
 
@@ -51,7 +51,7 @@ def get_token():
         print("Token not refreshed")
         sys.exit(1)
 
-    data = { 
+    data = {
         "email": email,
         "password": password,
         "vars": { "client_version": "99999" }
@@ -81,7 +81,7 @@ headers = { "authorization": f"Bearer {access_token}" }
 
 def get_config():
     player_fetch_data = {"rpc": {"id": "player_fetch_data", "payload": "{}"}}
-    
+
     init_ws()
     ws.send(json.dumps(player_fetch_data).encode())
     _, msg = ws.recv(), ws.recv()
@@ -110,7 +110,7 @@ def get_user(user_id: str = None, user_name: str = None):
         query_url += f"?ids={user_id}"
     elif user_name != None:
         query_url += f"?usernames={user_name}"
-    
+
     response = requests.get(query_url, headers=headers)
     return response.json()
 
@@ -204,9 +204,9 @@ def main():
     # levels
     levels = get_levels()
     write_json("levels", levels)
-    
+
     levels_leaderboard = []
-    
+
     for level in levels:
         author_id = level["author_id"]
         author_name = level["author_name"]
@@ -217,17 +217,17 @@ def main():
                 item["levels"] += 1
                 found = True
                 break
-        
+
         if not found:
             levels_leaderboard.append({
                 "id": author_id,
                 "username": author_name,
                 "levels": 1
             })
-        
+
         if author_id not in user_ids:
             user_ids.append(author_id)
-    
+
     levels_leaderboard = sorted(levels_leaderboard, key=lambda x: x["levels"], reverse=True)[:500]
     write_json("levels_leaderboard", levels_leaderboard)
 
@@ -278,10 +278,7 @@ def main():
                     "username": record_holder_username,
                     "records": 1,
                 })
-        
-        # uncomment for all leaderboard users
-        # for record in leaderboard:
-        #     record_holder_id = record["owner_id"]
+
             if record_holder_id not in user_ids:
                 user_ids.append(record_holder_id)
     records_leaderboard.sort(key=lambda x: x["records"], reverse=True)
@@ -316,7 +313,7 @@ def main():
     games_leaderboard = []
     deaths_leaderboard = []
     winrate_leaderboard = []
-    
+
     for user in users:
         wins = user["stats"]["GamesWon"] if "GamesWon" in user["stats"] else 0
         winstreak = user["stats"]["Winstreak"] if "Winstreak" in user["stats"] else 0
@@ -354,13 +351,13 @@ def main():
                 "username": user["display_name"],
                 "winrate": winrate,
             })
-        
+
     wins_leaderboard = sorted(wins_leaderboard, key=lambda x: x["wins"], reverse=True)[:500]
     winstreak_leaderboard = sorted(winstreak_leaderboard, key=lambda x: x["winstreak"], reverse=True)[:500]
     games_leaderboard = sorted(games_leaderboard, key=lambda x: x["games"], reverse=True)[:500]
     deaths_leaderboard = sorted(deaths_leaderboard, key=lambda x: x["deaths"], reverse=True)[:500]
     winrate_leaderboard = sorted(winrate_leaderboard, key=lambda x: x["winrate"], reverse=True)[:500]
-    
+
     write_json("wins_leaderboard", wins_leaderboard)
     write_json("winstreak_leaderboard", winstreak_leaderboard)
     write_json("games_leaderboard", games_leaderboard)
