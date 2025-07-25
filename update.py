@@ -1,6 +1,6 @@
 # update.py
 # goober-dash-stats-api
-# author(s): 
+# author(s):
 #   .index
 #   Tank8k
 
@@ -72,20 +72,30 @@ get_token()
 ws_url = f"wss://{base_uri}/ws?lang=en&status=true&token={access_token}"
 
 # connection
-ws = None
-def init_ws():
-    global ws
+ws = websocket.create_connection(ws_url)
+if not ws.connected:
     ws = websocket.create_connection(ws_url)
-init_ws()
+    if not ws.connected:
+        print("Failed to connect to WebSocket.")
+        sys.exit(1)
+
+def send(payload: str):
+    global ws
+    if not ws.connected:
+        ws = websocket.create_connection(ws_url)
+        if not ws.connected:
+            print("Failed to reconnect to WebSocket.")
+            sys.exit(1)
+
+    ws.send(payload.encode())
+
 headers = { "authorization": f"Bearer {access_token}" }
 
 def get_config():
     player_fetch_data = {"rpc": {"id": "player_fetch_data", "payload": "{}"}}
 
-    init_ws()
-    ws.send(json.dumps(player_fetch_data).encode())
+    send(json.dumps(player_fetch_data))
     _, msg = ws.recv(), ws.recv()
-    ws.close()
     response = json.loads(json.loads(msg)["rpc"]["payload"])
 
     write_json("server_config", response["data"])
@@ -154,10 +164,8 @@ def get_levels():
         "rpc": {"id": "levels_query_curated", "payload": "{}"},
     }
 
-    init_ws()
-    ws.send(json.dumps(levels_query).encode())
+    send(json.dumps(levels_query))
     _, msg = ws.recv(), ws.recv()
-    ws.close()
     response = json.loads(json.loads(msg)["rpc"]["payload"])
 
     return response["levels"]
@@ -172,10 +180,8 @@ def get_level_leaderboard(level_id: str):
         },
     }
 
-    init_ws()
-    ws.send(json.dumps(query_leaderboard).encode())
+    send(json.dumps(query_leaderboard))
     _, msg = ws.recv(), ws.recv()
-    ws.close()
     response = json.loads(json.loads(msg)["rpc"]["payload"])
 
     return response["records"]
@@ -190,10 +196,8 @@ def get_user_stats(user_id: str):
         },
     }
 
-    init_ws()
-    ws.send(json.dumps(levels_query).encode())
+    send(json.dumps(levels_query))
     _, msg = ws.recv(), ws.recv()
-    ws.close()
     response = json.loads(json.loads(msg).get("rpc", {}).get("payload", '{}'))
 
     return response
@@ -305,6 +309,9 @@ def main():
             user_stats["id"] = id
             users.append(user_stats)
         print(f"User: {i + 1} / {len(user_ids)}")
+
+    ws.close()
+
     write_json("users", users)
 
     # stats leaderboards
