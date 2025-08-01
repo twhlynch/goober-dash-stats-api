@@ -280,6 +280,7 @@ def main():
             user_ids.append(owner_id)
 
     # user ids
+    user_ids = [id for id in user_ids if id not in blacklist]
     write_json("user_ids", user_ids)
 
     # users
