@@ -79,6 +79,8 @@ if not ws.connected:
         print("Failed to connect to WebSocket.")
         sys.exit(1)
 
+ws.recv() # status presence event
+
 def send(payload: str):
     global ws
     if not ws.connected:
@@ -87,7 +89,23 @@ def send(payload: str):
             print("Failed to reconnect to WebSocket.")
             sys.exit(1)
 
+        ws.recv() # status presence event
+
     ws.send(payload.encode())
+
+def recv():
+    global ws
+    if not ws.connected:
+        ws = websocket.create_connection(ws_url)
+        if not ws.connected:
+            print("Failed to reconnect to WebSocket.")
+            sys.exit(1)
+
+        ws.recv() # status presence event
+
+    msg = ws.recv()
+    response = json.loads(json.loads(msg).get("rpc", {}).get("payload", '{}'))
+    return response
 
 headers = { "authorization": f"Bearer {access_token}" }
 
@@ -95,8 +113,7 @@ def get_config():
     player_fetch_data = {"rpc": {"id": "player_fetch_data", "payload": "{}"}}
 
     send(json.dumps(player_fetch_data))
-    _, msg = ws.recv(), ws.recv()
-    response = json.loads(json.loads(msg)["rpc"]["payload"])
+    response = recv()
 
     write_json("server_config", response["data"])
     return response["data"]
@@ -155,8 +172,7 @@ def get_levels():
     }
 
     send(json.dumps(levels_query))
-    _, msg = ws.recv(), ws.recv()
-    response = json.loads(json.loads(msg)["rpc"]["payload"])
+    response = recv()
 
     return response["levels"]
 
@@ -171,8 +187,7 @@ def get_level_leaderboard(level_id: str):
     }
 
     send(json.dumps(query_leaderboard))
-    _, msg = ws.recv(), ws.recv()
-    response = json.loads(json.loads(msg)["rpc"]["payload"])
+    response = recv()
 
     return response["records"]
 
@@ -187,8 +202,7 @@ def get_user_stats(user_id: str):
     }
 
     send(json.dumps(levels_query))
-    _, msg = ws.recv(), ws.recv()
-    response = json.loads(json.loads(msg).get("rpc", {}).get("payload", '{}'))
+    response = recv()
 
     return response
 
@@ -198,6 +212,8 @@ def main():
     # levels
     levels = get_levels()
     write_json("levels", levels)
+
+    print(f"Got {len(levels)} levels")
 
     levels_leaderboard_dict = {}
 
