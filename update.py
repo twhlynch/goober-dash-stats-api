@@ -111,7 +111,11 @@ def recv():
     response = json.loads(json.loads(msg).get("rpc", {}).get("payload", '{}'))
     return response
 
-headers = { "authorization": f"Bearer {access_token}" }
+headers = {
+    "authorization": f"Bearer {access_token}",
+    "Content-Type": "application/json",
+    "User-Agent": "curl/8.7.1"
+}
 
 def get_config():
     player_fetch_data = {"rpc": {"id": "player_fetch_data", "payload": "{}"}}
