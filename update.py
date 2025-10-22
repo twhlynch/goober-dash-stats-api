@@ -56,7 +56,11 @@ def get_token():
         "password": password,
         "vars": { "client_version": "99999" }
     }
-    auth_headers = { "authorization": "Basic OTAyaXViZGFmOWgyZTlocXBldzBmYjlhZWIzOTo=" }
+    auth_headers = {
+        "Content-Type": "application/json",
+        "Authorization": "Basic OTAyaXViZGFmOWgyZTlocXBldzBmYjlhZWIzOTo=",
+        "User-Agent": "curl/8.7.1"
+    }
     response = requests.post(
         f"{rest_url}account/authenticate/email?create=false",
         data=json.dumps(data),
