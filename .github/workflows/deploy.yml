@@ -9,7 +9,7 @@ jobs:
   send-request:
     runs-on: ubuntu-latest
     steps:
-      - name: Send curl request
+      - name: Trigger Deploy Hook
         run: |
           curl -X GET ${{ secrets.DEPLOY_HOOK }}
         env:
