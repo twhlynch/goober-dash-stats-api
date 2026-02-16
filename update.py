@@ -241,7 +241,7 @@ def main():
             user_ids.append(author_id)
 
     levels_leaderboard = list(levels_leaderboard_dict.values())
-    levels_leaderboard = sorted(levels_leaderboard, key=lambda x: x["levels"], reverse=True)[:500]
+    levels_leaderboard = sorted(levels_leaderboard, key=lambda x: x["levels"], reverse=True)[:1000]
     write_json("levels_leaderboard", levels_leaderboard)
 
     # race levels
@@ -365,11 +365,11 @@ def main():
                 "winrate": winrate,
             })
 
-    wins_leaderboard = sorted(wins_leaderboard, key=lambda x: x["wins"], reverse=True)[:500]
-    winstreak_leaderboard = sorted(winstreak_leaderboard, key=lambda x: x["winstreak"], reverse=True)[:500]
-    games_leaderboard = sorted(games_leaderboard, key=lambda x: x["games"], reverse=True)[:500]
-    deaths_leaderboard = sorted(deaths_leaderboard, key=lambda x: x["deaths"], reverse=True)[:500]
-    winrate_leaderboard = sorted(winrate_leaderboard, key=lambda x: x["winrate"], reverse=True)[:500]
+    wins_leaderboard = sorted(wins_leaderboard, key=lambda x: x["wins"], reverse=True)[:1000]
+    winstreak_leaderboard = sorted(winstreak_leaderboard, key=lambda x: x["winstreak"], reverse=True)[:1000]
+    games_leaderboard = sorted(games_leaderboard, key=lambda x: x["games"], reverse=True)[:1000]
+    deaths_leaderboard = sorted(deaths_leaderboard, key=lambda x: x["deaths"], reverse=True)[:1000]
+    winrate_leaderboard = sorted(winrate_leaderboard, key=lambda x: x["winrate"], reverse=True)[:1000]
 
     write_json("wins_leaderboard", wins_leaderboard)
     write_json("winstreak_leaderboard", winstreak_leaderboard)
