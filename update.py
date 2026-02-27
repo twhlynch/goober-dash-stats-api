@@ -303,6 +303,14 @@ def main():
         if owner_id not in user_ids and owner_id not in blacklist:
             user_ids.append(owner_id)
 
+    # old seasons
+    for i in range(season - 1, season - 10, season):
+        prev_leaderboard = get_season_leaderboard(i, "global", 100, "00000000-0000-0000-0000-000000000001")
+        for record in prev_leaderboard["records"]:
+            owner_id = record["owner_id"]
+            if owner_id not in user_ids and owner_id not in blacklist:
+                user_ids.append(owner_id)
+
     # user ids
     user_ids = [id for id in user_ids if id not in blacklist]
     write_json("user_ids", user_ids)
