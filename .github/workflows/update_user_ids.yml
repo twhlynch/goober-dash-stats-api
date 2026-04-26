@@ -1,0 +1,30 @@
+name: Update user ids
+
+on:
+  workflow_dispatch:
+
+jobs:
+  send-request:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Update user ids
+        run: |
+          set -euo pipefail
+          curl -o new_user_ids.json https://raw.githubusercontent.com/GrosserSpino/user_ids/refs/heads/main/user_ids.json
+          jq -s 'add | unique | sort' new_user_ids.json v1/user_ids.json | tr -d ' ' > combined_user_ids.json
+          mv combined_user_ids.json v1/user_ids.json && rm new_user_ids.json
+
+      - name: Commit changes
+        run: |
+          git config --global user.email "twhlynch.index@gmail.com"
+          git config --global user.name "twhlynch"
+          git add v1/user_ids.json
+          git commit -m "update user ids list" || :
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
